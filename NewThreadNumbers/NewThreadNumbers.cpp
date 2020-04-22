@@ -9,42 +9,38 @@
 #include <fstream>
 
 using namespace std;
-clock_t start;
-ofstream fileOutput1("t1.log");
-ofstream fileOutput2("t2.log");
+CRITICAL_SECTION CriticalSection;
 
-DWORD WINAPI ThreadProc(CONST LPVOID lpParam)
+DWORD WINAPI ThreadProc(CONST LPVOID workingVariable)
 {
-
-	for (int i = 0; i < 125; i++)
+	EnterCriticalSection(&CriticalSection);
+	int j = *(int*)workingVariable;
+	for (int i = 0; i < 100000; i++)
 	{
-		clock_t stop = clock();
-		if (*(int*)lpParam == 1)
-		{
-			fileOutput1 << ((float)stop - start) / CLOCKS_PER_SEC << '\n';
-		}
-		else
-		{
-			fileOutput2 << ((float)stop - start) / CLOCKS_PER_SEC << '\n';
-		}
+		j = j + 1;
 	}
-
+	*(int*)workingVariable = j;
+	LeaveCriticalSection(&CriticalSection);
 	ExitThread(0);
 }
 
 int main(int argc, char* argv[])
 {
+	InitializeCriticalSection(&CriticalSection);
 	int threadsNumber = 2;
 	HANDLE* handles = new HANDLE[threadsNumber];
-	int* num = new int[threadsNumber];
+	int WorkingVariable = 0;
+	unsigned affinityMask1 = 0x00000000;
+	unsigned affinityMask2 = 0x0000000C;
 	for (int i = 0; i < threadsNumber; i++)
 	{
-		start = clock();
-		num[i] = i + 1;
-		handles[i] = CreateThread(NULL, 0, &ThreadProc, (LPVOID)&num[i], CREATE_SUSPENDED, NULL);
+		SetThreadAffinityMask(handles[i], affinityMask2);
+		handles[i] = CreateThread(NULL, 0, &ThreadProc, &WorkingVariable, CREATE_SUSPENDED, NULL);
 		ResumeThread(handles[i]);
 	}
 
 	WaitForMultipleObjects(threadsNumber, handles, true, INFINITE);
+	DeleteCriticalSection(&CriticalSection);
+	cout << WorkingVariable;
 	return 0;
 }
