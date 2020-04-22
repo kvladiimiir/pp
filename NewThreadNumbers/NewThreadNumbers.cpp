@@ -11,17 +11,17 @@ using namespace std;
 class Task : ITask
 {
 public:
-	void Execute() override;
+	void Execute(int n) override;
 };
 
 DWORD WINAPI ThreadProc(LPVOID lpParam)
 {
 	ITask *task = (ITask*)lpParam;
-	task->Execute();
+	task->Execute(3);
 	ExitThread(0);
 }
 
-void Task::Execute()
+void Task::Execute(int n)
 {
 	std::cout << "Task new";
 }
