@@ -16,8 +16,8 @@ public:
 
 DWORD WINAPI ThreadProc(LPVOID lpParam)
 {
-	ITask *tas = (ITask*)lpParam;
-	tas->Execute();
+	ITask *task = (ITask*)lpParam;
+	task->Execute();
 	ExitThread(0);
 }
 
