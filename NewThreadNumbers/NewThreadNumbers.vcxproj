@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ITask.h" />
+    <ClInclude Include="IWorker.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

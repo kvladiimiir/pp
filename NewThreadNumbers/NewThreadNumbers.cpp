@@ -2,45 +2,70 @@
 //
 
 #include "pch.h"
-#include <windows.h>
-#include <time.h>
-#include <string>
-#include <iostream>
-#include <fstream>
+#include "IWorker.h"
+#include "ITask.h"
+
 
 using namespace std;
-CRITICAL_SECTION CriticalSection;
 
-DWORD WINAPI ThreadProc(CONST LPVOID workingVariable)
+class Task : ITask
 {
-	EnterCriticalSection(&CriticalSection);
-	int j = *(int*)workingVariable;
-	for (int i = 0; i < 100000; i++)
-	{
-		j = j + 1;
-	}
-	*(int*)workingVariable = j;
-	LeaveCriticalSection(&CriticalSection);
+public:
+	void Execute() override;
+};
+
+DWORD WINAPI ThreadProc(LPVOID lpParam)
+{
+	ITask *tas = (ITask*)lpParam;
+	tas->Execute();
 	ExitThread(0);
 }
 
-int main(int argc, char* argv[])
+void Task::Execute()
 {
-	InitializeCriticalSection(&CriticalSection);
-	int threadsNumber = 2;
-	HANDLE* handles = new HANDLE[threadsNumber];
-	int WorkingVariable = 0;
-	unsigned affinityMask1 = 0x00000000;
-	unsigned affinityMask2 = 0x0000000C;
-	for (int i = 0; i < threadsNumber; i++)
+	std::cout << "Task new";
+}
+
+class Worker : public IWorker
+{
+public:
+	bool ExecuteTask(Task & task)
 	{
-		SetThreadAffinityMask(handles[i], affinityMask2);
-		handles[i] = CreateThread(NULL, 0, &ThreadProc, &WorkingVariable, CREATE_SUSPENDED, NULL);
-		ResumeThread(handles[i]);
+		if (IsBusy())
+		{
+			return false;
+		}
+		Task * taskPtr = new Task();
+		int threadsNumber = 5;
+
+		handle = CreateThread(NULL, 0, &ThreadProc, &task, CREATE_SUSPENDED, NULL);
+		std::cout << '\n';
+		ResumeThread(handle);
+
+		WaitForSingleObject(handle, INFINITE);
+
+		isComplete = true;
+		return isComplete;
 	}
 
-	WaitForMultipleObjects(threadsNumber, handles, true, INFINITE);
-	DeleteCriticalSection(&CriticalSection);
-	cout << WorkingVariable;
+	bool IsBusy()
+	{
+		LPDWORD status;
+
+		if (GetExitCodeThread(handle, status))
+		{
+			return true;
+		}
+
+		return isComplete;
+	}
+
+private:
+	HANDLE handle = new HANDLE;
+	bool isComplete = false;
+};
+
+int main(int argc, char* argv[])
+{
 	return 0;
 }
