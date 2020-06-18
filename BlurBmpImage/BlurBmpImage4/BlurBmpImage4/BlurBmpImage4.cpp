@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
 {
 	if (argc == 2 && strcmp(argv[1], "/?") == 0)
 	{
-		cout << "Input: BlurBmpImage4.exe inputFile.bmp outputFile.bmp threads cores priorities(separated by space)\n";
+		cout << "Input: BlurBmpImage4.exe inputFile.bmp outputFile.bmp threads cores priorities(separated by space)\n Exmple priorities:\n below_normal \n normal \n above_normal";
 		return -1;
 	}
 
