@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "LogFileWriter.h"
 
-LogFileWriter::LogFileWriter(std::string fileName)
-	: m_output(std::ofstream(fileName))
+LogFileWriter::LogFileWriter(string fileName)
+	: m_output(ofstream(fileName))
 {
 }
 
-void LogFileWriter::Write(std::string str)
+void LogFileWriter::Write(string str)
 {
 	m_output << str;
 }
