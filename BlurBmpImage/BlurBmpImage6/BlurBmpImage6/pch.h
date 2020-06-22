@@ -38,7 +38,6 @@ struct ThreadData
 	int endIndex;
 	int numberOfThread;
 	clock_t start;
-	ofstream* outputFiles;
 	LogBuffer* logBuffer;
 };
 

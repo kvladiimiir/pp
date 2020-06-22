@@ -69,7 +69,6 @@ DWORD WINAPI ThreadProc(CONST LPVOID lpParam)
 
 	bitmap_image iimage = data->ibmp;
 	bitmap_image* oimage = data->obmp;
-	ofstream* oFiles = data->outputFiles;
 
 	for (int i = data->startIndex; i <= data->endIndex; i++)
 	{
@@ -95,7 +94,6 @@ DWORD WINAPI ThreadProc(CONST LPVOID lpParam)
 
 			string str = to_string(data->numberOfThread) + " " + to_string(GetPeriod(data->start) / CLOCKS_PER_SEC) + '\n';
 
-			*oFiles << str;
 			data->logBuffer->CheckSizeAndPushData(str);
 		}
 	}
@@ -109,7 +107,6 @@ void BlurImage(InputData* inputData, clock_t startTime)
 	int cores = inputData->cores;
 	bitmap_image inputImg(inputData->inputImgName);
 	bitmap_image outputImg(inputData->inputImgName);
-	ofstream* outputFilesStreams = new ofstream[threads];
 
 	ThreadData* threadsData = new ThreadData[threads];
 	ThreadPriority* threadsPriorities = new ThreadPriority[threads];
@@ -122,13 +119,12 @@ void BlurImage(InputData* inputData, clock_t startTime)
 
 	for (int i = 0; i < threads; i++)
 	{
-		outputFilesStreams[i] = ofstream("t" + to_string(i) + ".txt");
 		threadsPriorities[i] = inputData->prioritiesThreads[i];
 
 		int first = (i == 0) ? 0 : (i * colNumber) + 1;
 		int second = (i == threads - 1) ? inputImg.width() - 1 : (i + 1) * colNumber;
 
-		ThreadData threadData = { inputImg, &outputImg, first, second, i + 1, startTime, &outputFilesStreams[i], logBuffer };
+		ThreadData threadData = { inputImg, &outputImg, first, second, i + 1, startTime, logBuffer };
 		threadsData[i] = threadData;
 	}
 
