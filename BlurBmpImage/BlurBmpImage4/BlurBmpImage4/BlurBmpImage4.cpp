@@ -88,7 +88,7 @@ DWORD WINAPI ThreadProc(CONST LPVOID lpParam)
 				currB / pixNum);
 
 			clock_t stop = clock();
-			*oFiles << data->numberOfThread << " " << ((float)stop - data->start) / CLOCKS_PER_SEC << '\n';
+			*oFiles << data->numberOfThread << "\t" << (((float)stop - data->start) / CLOCKS_PER_SEC) * 1000 << '\n';
 		}
 	}
 
