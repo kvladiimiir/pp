@@ -23,13 +23,7 @@ InputData* ReadData(char* argv[])
 		result->mode = DefaultThreadMode;
 	}
 
-	/*InputData* result = new InputData();
-	result->mode = PoolMode;
-	result->blocksNum = 4;
-	result->threads = 8;
-	result->inputDirName = "imagesInput";
-	result->outputDirName = "imagesOutput1111";
-	return result;*/
+	return result;
 }
 
 float GetPeriod(clock_t start)
