@@ -13,8 +13,9 @@ InputData* ReadData(char* argv[])
 	result->inputDirName = inputDir;
 	result->outputDirName = outputDir;
 	result->threads = threads;
+	string modeArg = argv[1];
 
-	if (argv[1] == "pool")
+	if (modeArg == "pool")
 	{
 		result->mode = PoolMode;
 	}
@@ -63,7 +64,7 @@ void BlurImage(InputData* inputData)
 	vector<string> imagesToBlur;
 
 	imagesToBlur = WorkWithDirectory(inputData->inputDirName);
-	clock_t start = clock();
+
 	for (size_t j = 0; j < imagesToBlur.size(); j++)
 	{
 		bitmap_image inputImg(imagesToBlur[j]);
@@ -87,20 +88,20 @@ void BlurImage(InputData* inputData)
 		}
 
 		WorkThread work(tasks, blocks);
+		cout << inputData->mode;
 		if (inputData->mode == PoolMode)
 		{
+			cout << "pool\n";
 			work.WorkWithPool();
 		}
 		else
 		{
+			cout << "thread\n";
 			work.WorkWithThread();
 		}
 
 		outputImg.save_image(inputData->outputDirName + "/blur" + to_string(j) + ".bmp");
 	}
-
-	clock_t period = clock() - start;
-	cout << period << '\n';
 }
 
 int main(int argc, char* argv[])
@@ -130,7 +131,12 @@ int main(int argc, char* argv[])
 
 		try
 		{
+			clock_t start = clock();
+
 			BlurImage(inputData);
+
+			clock_t period = clock() - start;
+			cout << period << '\n';
 		}
 		catch (exception)
 		{
