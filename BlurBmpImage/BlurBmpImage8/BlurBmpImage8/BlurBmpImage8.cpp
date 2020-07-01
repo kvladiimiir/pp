@@ -88,15 +88,12 @@ void BlurImage(InputData* inputData)
 		}
 
 		WorkThread work(tasks, blocks);
-		cout << inputData->mode;
 		if (inputData->mode == PoolMode)
 		{
-			cout << "pool\n";
 			work.WorkWithPool();
 		}
 		else
 		{
-			cout << "thread\n";
 			work.WorkWithThread();
 		}
 
@@ -136,7 +133,7 @@ int main(int argc, char* argv[])
 			BlurImage(inputData);
 
 			clock_t period = clock() - start;
-			cout << period << '\n';
+			cout << ((float)period / CLOCKS_PER_SEC) << '\n';
 		}
 		catch (exception)
 		{
