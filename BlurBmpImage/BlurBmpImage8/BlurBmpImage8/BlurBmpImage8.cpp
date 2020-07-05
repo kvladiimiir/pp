@@ -87,7 +87,7 @@ void BlurImage(InputData* inputData)
 			tasks.push_back(new Blur(threadData));
 		}
 
-		WorkThread work(tasks, blocks);
+		WorkThread work(tasks, threads);
 		if (inputData->mode == PoolMode)
 		{
 			work.WorkWithPool();
