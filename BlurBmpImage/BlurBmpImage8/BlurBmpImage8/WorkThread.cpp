@@ -18,7 +18,10 @@ void WorkThread::WorkWithThread()
 		ResumeThread(handle);
 	}
 
-	WaitForMultipleObjects((DWORD)handles.size(), handles.data(), true, INFINITE);
+	for (const auto& handle : handles)
+	{
+		WaitForSingleObject(handle, INFINITE);
+	}
 }
 
 void WorkThread::WorkWithPool()
